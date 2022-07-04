@@ -41,35 +41,104 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         //内容区域
         body: GestureDetector(
-          behavior: HitTestBehavior.translucent,
-          onTap: () {
-            FocusScope.of(context).requestFocus(FocusNode());
-          },
-          child: CustomScrollView(
-            slivers: <Widget>[
-              _buildBorrowView(),
-            ],
-          ),
-        ));
+            behavior: HitTestBehavior.translucent,
+            onTap: () {
+              FocusScope.of(context).requestFocus(FocusNode());
+            },
+            child: getprotileView()));
   }
 
-  SliverToBoxAdapter _buildBorrowView() {
-    return SliverToBoxAdapter(
-        child: Container(
-      height: 155.w,
-      margin: EdgeInsets.all(10.w),
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(8.w)),
-          boxShadow: [
-            BoxShadow(
-                color:
-                    const Color.fromRGBO(192, 192, 192, 0.5).withOpacity(0.2),
-                offset: Offset(0, 2.2.w), //阴影xy轴偏移量
-                blurRadius: 7.7.w, //阴影模糊程度
-                spreadRadius: 0 //阴影扩散程度
-                )
-          ]),
-    ));
+  Widget getprotileView() {
+    return Column(
+      children: <Widget>[
+        Container(
+          height: 100.w,
+          width: 390.w,
+          color: SystemInfo.shared().themeColor,
+          child: Stack(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(left: 20.w, top: 15.w),
+                child: ClipOval(
+                    child: Image.network(
+                        "https://bkimg.cdn.bcebos.com/pic/0b46f21fbe096b634c5ee7ef0c338744eaf8acce?x-bce-process=image/resize,m_lfit,w_536,limit_1/format,f_jpg",
+                        width: 60,
+                        height: 60,
+                        fit: BoxFit.cover)),
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 100.w, top: 20.w),
+                child: Text(
+                  '用户：武汉大学001',
+                  style: TextStyle(fontSize: 16.w, color: Colors.white),
+                ),
+              )
+            ],
+          ),
+        ),
+        Expanded(
+          child: ListView(
+            //列表视图
+            children: <Widget>[
+              ListTile(
+                //列表块
+                leading: Icon(
+                  Icons.article_outlined,
+                  color: SystemInfo.shared().themeColor,
+                  size: 25,
+                ),
+                trailing: const Icon(
+                  Icons.arrow_forward_ios,
+                  size: 19,
+                ),
+                title: Text(
+                  '数据导出',
+                  style: TextStyle(
+                    fontSize: 16.w,
+                  ),
+                ),
+                onTap: () {},
+              ),
+              ListTile(
+                leading: Icon(
+                  Icons.add_moderator_outlined,
+                  color: SystemInfo.shared().themeColor,
+                  size: 25,
+                ),
+                trailing: const Icon(
+                  Icons.arrow_forward_ios,
+                  size: 19,
+                ),
+                title: Text(
+                  '账号安全',
+                  style: TextStyle(
+                    fontSize: 16.w,
+                  ),
+                ),
+                onTap: () {},
+              ),
+              ListTile(
+                leading: Icon(
+                  Icons.settings,
+                  color: SystemInfo.shared().themeColor,
+                  size: 25,
+                ),
+                trailing: const Icon(
+                  Icons.arrow_forward_ios,
+                  size: 19,
+                ),
+                title: Text(
+                  '设置',
+                  style: TextStyle(
+                    fontSize: 16.w,
+                  ),
+                ),
+                onTap: () {},
+              ),
+            ],
+          ),
+        )
+      ],
+    );
   }
 }

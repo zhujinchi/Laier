@@ -30,6 +30,11 @@ class _LoginScreenState extends State<LoginScreen> {
     getlocallog();
     super.initState();
     passwordVisible = false;
+
+    setState(() {
+      _accountEditingController.text = '131275823131';
+      _passWordEditingController.text = '123456';
+    });
   }
 
   getlocallog() async {
@@ -59,22 +64,6 @@ class _LoginScreenState extends State<LoginScreen> {
           backgroundColor: SystemInfo.shared().loginbackgroundColor,
           systemOverlayStyle: SystemUiOverlayStyle.dark,
           elevation: 0,
-          leading: Builder(
-            builder: (BuildContext context) {
-              return IconButton(
-                icon: const Icon(
-                  Icons.arrow_back,
-                  color: Color.fromARGB(255, 30, 16, 99),
-                ),
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
-              );
-            },
-          ),
         ),
         body: GestureDetector(
           onTap: () {

@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:laier/pages/login/login_screen.dart';
+import 'package:flutter/services.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations(
+    [
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ],
+  );
   runApp(const MyApp());
 }
 
