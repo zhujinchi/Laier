@@ -1,12 +1,17 @@
 import 'dart:io';
-
+import 'dart:typed_data';
+import 'dart:ui' as ui;
 import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../data/system_info.dart';
+import 'dart:convert';
+import 'package:lecle_flutter_absolute_path/lecle_flutter_absolute_path.dart';
 
 class MeasureScreen extends StatefulWidget {
   const MeasureScreen({Key? key}) : super(key: key);
@@ -274,15 +279,52 @@ class _MeasureScreenState extends State<MeasureScreen> {
     ));
   }
 
-  Future getImage(bool istakephoto) async {
+  getImage(bool istakephoto) async {
     try {
+      // 拍照 or 本地相册
       final image = await ImagePicker().pickImage(
           source: istakephoto ? ImageSource.camera : ImageSource.gallery);
       if (image == null) return;
       final imageTemp = File(image.path);
+      Uint8List img = imageTemp.readAsBytesSync();
+      //保存图片到本地相册
+      final result =
+          await ImageGallerySaver.saveImage(img, quality: 60, name: "test");
+      var bodyData =  FormData.fromMap({'file':img});
+      var dio = Dio();
+
+
+      var resp = await dio.post('http://43.134.47.8:5000/lai', data: bodyData,options: Options(contentType: "multipart/form-data")); //这里没有返回
+      print(resp.data);
+      print(resp.data['lai']);
+      var lai = (resp.data)['lai'];
+      var newImgInfo = result['filePath'] + '@' + lai + ';';
+      //保存图片地址和lai值到本地
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      if (prefs.getString('imageInfo') != null) {
+        var oldData = prefs.getString('imageInfo');
+        var data = oldData! + newImgInfo;
+        prefs.setString('imageInfo', data);
+      } else {
+        prefs.setString('imageInfo', newImgInfo);
+      }
+
       setState(() => this.image = imageTemp);
-    } on PlatformException catch (e) {
+    }
+    on PlatformException catch (e) {
       print('Failed to pick image: $e');
     }
+  }
+
+
+
+
+  Future<Uint8List?> _fun(image) async {
+    ByteData? byteData = await image.toByteData();
+    if (byteData != null) {
+      Uint8List bytes = byteData.buffer.asUint8List();
+      return bytes;
+    }
+    return null;
   }
 }
