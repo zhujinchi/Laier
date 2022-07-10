@@ -381,7 +381,7 @@ class _HistoryScreenState extends State<HistoryScreen>
 
   String getlai() {
     var rng = new Random();
-    var temp = rng.nextInt(100) / 100;
+    var temp = rng.nextInt(10000) / 10000;
     return temp.toString();
   }
 }
