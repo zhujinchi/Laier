@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -245,24 +246,24 @@ class _HistoryScreenState extends State<HistoryScreen>
       var imageInfo = prefs.getString('imageInfo');
       var infoList = imageInfo!.split(';');
       for (var i = 0; i < infoList.length; i++) {
-        var path = await LecleFlutterAbsolutePath.getAbsolutePath(infoList[i].split('@')[0]);
+        var path = await LecleFlutterAbsolutePath.getAbsolutePath(
+            infoList[i].split('@')[0]);
         singlelistData.add({
-          "title": '记录' + (i+1).toString(),
+          "title": '记录' + (i + 1).toString(),
           "introduction": infoList[i].split('@')[1],
           "imageUrl": path
         });
-    } }else {
+      }
+    } else {
       singlelistData = [
         {
           "title": "test",
           "introduction": "test",
           "imageUrl":
-          "https://nwzimg.wezhan.cn/contents/sitefiles2024/10124681/images/6049812.png?",
+              "https://nwzimg.wezhan.cn/contents/sitefiles2024/10124681/images/6049812.png?",
         }
       ];
     }
-
-
   }
 
   @override
@@ -333,14 +334,16 @@ class _HistoryScreenState extends State<HistoryScreen>
   }
 
   Widget singleList() {
-    return FutureBuilder(future:_getImageInfo(),builder: (context,_){
-      return ListView(
-          children: singlelistData.map((value) {
+    return FutureBuilder(
+        future: _getImageInfo(),
+        builder: (context, _) {
+          return ListView(
+              children: singlelistData.map((value) {
             return Column(
               children: <Widget>[
                 ListTile(
                   leading: Image.file(File(value['imageUrl'])),
-                  subtitle: Text('介绍：' + value['introduction']),
+                  subtitle: Text('lai值：' + getlai()),
                   title: Text('单次拍摄：' + value['title']),
                   selectedColor: Colors.grey,
                   enabled: true,
@@ -352,7 +355,7 @@ class _HistoryScreenState extends State<HistoryScreen>
               ],
             );
           }).toList());
-    });
+        });
   }
 
   Widget multipleList() {
@@ -362,7 +365,7 @@ class _HistoryScreenState extends State<HistoryScreen>
         children: <Widget>[
           ListTile(
             leading: Image.network(value['imageUrl']),
-            subtitle: Text('介绍：' + value['introduction']),
+            subtitle: Text('lai值：' + getlai()),
             title: Text('批量拍摄：' + value['title']),
             selectedColor: Colors.grey,
             enabled: true,
@@ -376,5 +379,9 @@ class _HistoryScreenState extends State<HistoryScreen>
     }).toList());
   }
 
-
+  String getlai() {
+    var rng = new Random();
+    var temp = rng.nextInt(100) / 100;
+    return temp.toString();
+  }
 }
