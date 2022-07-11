@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:laier/pages/history/history_screen.dart';
 import 'package:laier/pages/measure/measure_screen.dart';
 import 'package:laier/pages/profile/profile_screen.dart';
@@ -38,10 +37,7 @@ class _HomePageState extends State<HomePage> {
     _init();
   }
 
-  Future<void> _init() async {
-    bool canVibrate = await Vibrate.canVibrate;
-    User.shared().canVibrate = canVibrate;
-  }
+  Future<void> _init() async {}
 
   @override
   Widget build(BuildContext context) {
@@ -63,9 +59,6 @@ class _HomePageState extends State<HomePage> {
       itemCornerRadius: 12,
       curve: Curves.easeInOut,
       onItemSelected: (index) {
-        if (User.shared().canVibrate && _currentIndex != index) {
-          Vibrate.feedback(FeedbackType.success);
-        }
         setState(() => _currentIndex = index);
       },
       items: <MyBottomNavigationBarItem>[

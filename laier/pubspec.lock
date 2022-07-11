@@ -8,6 +8,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.6.3"
+  alert_dialog:
+    dependency: "direct main"
+    description:
+      name: alert_dialog
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.0.1"
   animations:
     dependency: transitive
     description:
@@ -104,6 +111,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_easyrefresh:
+    dependency: "direct main"
+    description:
+      name: flutter_easyrefresh
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.2.2"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -144,13 +158,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_vibrate:
-    dependency: "direct main"
-    description:
-      name: flutter_vibrate
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "1.3.0"
   flutter_web_plugins:
     dependency: transitive
     description: flutter

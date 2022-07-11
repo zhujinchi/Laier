@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -289,35 +290,175 @@ class _MeasureScreenState extends State<MeasureScreen> {
       Uint8List img = imageTemp.readAsBytesSync();
       //保存图片到本地相册
       final result =
-          await ImageGallerySaver.saveImage(img, quality: 60, name: "test");
-      var bodyData =  FormData.fromMap({'file':img});
-      var dio = Dio();
+          await ImageGallerySaver.saveImage(img, quality: 60, name: "k");
 
+      var imgpath =
+          await LecleFlutterAbsolutePath.getAbsolutePath(result['filePath']);
+      // print(img);
+      // var bodyData = FormData.fromMap({'file': img});
+      // var dio = Dio();
 
-      var resp = await dio.post('http://43.134.47.8:5000/lai', data: bodyData,options: Options(contentType: "multipart/form-data")); //这里没有返回
-      print(resp.data);
-      print(resp.data['lai']);
-      var lai = (resp.data)['lai'];
-      var newImgInfo = result['filePath'] + '@' + lai + ';';
-      //保存图片地址和lai值到本地
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      if (prefs.getString('imageInfo') != null) {
-        var oldData = prefs.getString('imageInfo');
-        var data = oldData! + newImgInfo;
-        prefs.setString('imageInfo', data);
-      } else {
-        prefs.setString('imageInfo', newImgInfo);
-      }
-
-      setState(() => this.image = imageTemp);
-    }
-    on PlatformException catch (e) {
+      // var resp = await dio.post('http://43.134.47.8:5000/lai',
+      //     data: bodyData,
+      //     options: Options(contentType: "multipart/form-data")); //这里没有返回
+      // print(resp.data);
+      // print(resp.data['lai']);
+      // var lai = (resp.data)['lai'];
+      // var newImgInfo = result['filePath'] + '@' + lai + ';';
+      var newImgInfo = '123';
+      showAlertDialog(imgpath!);
+    } on PlatformException catch (e) {
       print('Failed to pick image: $e');
     }
   }
 
+  void showAlertDialog(String imgPath) {
+    showDialog<Null>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text(
+              '图片是否满足需求？',
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w400,
+                  letterSpacing: 0),
+            ),
+            //可滑动
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Image.file(File(imgPath)),
+                  SizedBox(
+                    height: 15.w,
+                  ),
+                  const Text(
+                    '  ',
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w200,
+                        letterSpacing: 0),
+                  ),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: const Text(
+                  '确定',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w200,
+                      letterSpacing: 0),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  showAlertDialog2(imgPath);
+                },
+              ),
+              FlatButton(
+                child: const Text(
+                  '取消',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w200,
+                      letterSpacing: 0),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
 
+  void showAlertDialog2(String imgPath) {
+    DateTime dateTime = DateTime.now();
+    showDialog<Null>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text(
+              '处理后的图片',
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w400,
+                  letterSpacing: 0),
+            ),
+            //可滑动
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Image.file(File(imgPath)),
+                  SizedBox(
+                    height: 15.w,
+                  ),
+                  Text(
+                    'lai值：3.14\n经纬度：北纬 N31.37  东经E121.80\n时间：' +
+                        dateTime.toString().substring(0, 19),
+                    style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w200,
+                        letterSpacing: 0),
+                  ),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: const Text(
+                  '保存',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w200,
+                      letterSpacing: 0),
+                ),
+                onPressed: () {
+                  _save(imgPath, dateTime.toString().substring(0, 19));
+                  Fluttertoast.showToast(msg: '保存成功');
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                child: const Text(
+                  '放弃',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w200,
+                      letterSpacing: 0),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
 
+  _save(String newImgInfo, String datatime) async {
+    //保存图片地址和lai值到本地
+    var imageinformation = newImgInfo + '@' + datatime + ';';
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.getString('imageInfo') != null) {
+      var oldData = prefs.getString('imageInfo');
+      var data = oldData! + imageinformation;
+      prefs.setString('imageInfo', data);
+    } else {
+      prefs.setString('imageInfo', imageinformation);
+    }
+  }
 
   Future<Uint8List?> _fun(image) async {
     ByteData? byteData = await image.toByteData();
